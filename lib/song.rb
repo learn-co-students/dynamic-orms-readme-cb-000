@@ -14,11 +14,9 @@ class Song
     sql = "pragma table_info('#{table_name}')"
 
     table_info = DB[:conn].execute(sql)
-    column_names = []
-    table_info.each do |row|
-      column_names << row["name"]
-    end
-    column_names.compact
+    table_info.map do |row|
+      row["name"]
+    end.compact
   end
 
   self.column_names.each do |col_name|
@@ -59,6 +57,3 @@ class Song
   end
 
 end
-
-
-
