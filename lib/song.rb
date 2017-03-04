@@ -1,3 +1,4 @@
+require 'pry'
 require_relative "../config/environment.rb"
 require 'active_support/inflector'
 
@@ -5,12 +6,12 @@ class Song
 
   def self.table_name 
     self.to_s.downcase.pluralize #takes the name of the class, turns it into a string, lowercases it and makes it plural
-  end                            # example: A class Dog would equal a table name of "dogs"
+  end                            # example: A class Song would equal a table name of "songs"
                                  # .pluralize is available through 'active_support/inflector'
 
   def self.column_names
     DB[:conn].results_as_hash = true # returns an array of hashses describing the table itself.
-                              # Here is one of the many hashes in the array it will return. Each has equals one column.
+                              # Here is one of the many hashes in the array it will return.
          #   [{"cid"=>0,               |
          #     "name"=>"id",           | \
          #     "type"=>"INTEGER",      |  \
@@ -25,8 +26,7 @@ class Song
          #     5=>1},                  | /
 
 
-    sql = "pragma table_info('#{table_name}')" #=> SQL statement referencing the #table_name that holds our tables name.
-
+    sql = "pragma table_info('#{table_name}')" #=> pragma table_info returns the results of data type of the table.
     table_info = DB[:conn].execute(sql) #=> Iterate over the hashes to find the name of each columns.
     column_names = []
     table_info.each do |row|
@@ -44,7 +44,7 @@ class Song
   def initialize(options={}) #=> Takes in an argument called options that defaults to an empty hash.
     options.each do |property, value| #Iterates over the hash and sets a #property=  equal to its value.
       self.send("#{property}=", value) # As long as each property has a corresponding attr_accessor this will work.
-    end
+    end #self.send("#{property}=", value) calls the method property= and its argument is value.
   end
 
   def save #=> The final step after metaprogramming the other values.
@@ -61,6 +61,7 @@ class Song
     values = []         
     self.class.column_names.each do |col_name|
       values << "'#{send(col_name)}'" unless send(col_name).nil?
+      #"'#{send(col_name)}'" returns the vlaue of the col_name key.  
       #When we insert these values into the chart we want each value to be sepearte strings.
       #INSERT INTO songs (name, album) VALUES ('Hello', '25') ... Therefore, we wrap the return value
       #into a string. Each value shoudl be a seperate strin so we also use ' ' as well. This will
