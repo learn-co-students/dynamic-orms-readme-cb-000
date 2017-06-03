@@ -1,6 +1,6 @@
 require_relative "../config/environment.rb"
 require 'active_support/inflector'
-
+#this was a thing
 class Song
 
 
@@ -59,6 +59,3 @@ class Song
   end
 
 end
-
-
-
