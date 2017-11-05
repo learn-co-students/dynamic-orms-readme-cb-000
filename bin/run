@@ -9,4 +9,8 @@ puts "song name: " + song.name
 puts "song album: " + song.album
 song.save
 
-DB[:conn].execute("SELECT * FROM songs")
+#DB[:conn].execute("SELECT * FROM songs")
+
+
+r = Song.find_by_name("Hello")
+puts r
