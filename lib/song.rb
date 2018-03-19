@@ -44,6 +44,7 @@ class Song
   def values_for_insert
     values = []
     self.class.column_names.each do |col_name|
+      # dont understand send here
       values << "'#{send(col_name)}'" unless send(col_name).nil?
     end
     values.join(", ")
@@ -59,6 +60,3 @@ class Song
   end
 
 end
-
-
-
