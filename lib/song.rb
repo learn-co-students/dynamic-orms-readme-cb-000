@@ -25,6 +25,7 @@ class Song
     attr_accessor col_name.to_sym
   end
 
+# Remember, send() only works when a 'attr_accessor' is already defined.
   def initialize(options={})
     options.each do |property, value|
       self.send("#{property}=", value)
@@ -59,6 +60,3 @@ class Song
   end
 
 end
-
-
-
