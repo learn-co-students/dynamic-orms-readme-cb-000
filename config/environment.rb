@@ -14,3 +14,7 @@ SQL
 
 DB[:conn].execute(sql)
 DB[:conn].results_as_hash = true
+# Results will be returned as a hash:
+# {"id"=>1, "name"=>"Hello", "album"=>"25", 0 => 1, 1 => "Hello", 2 => "25"}
+# as opposed to an array:
+# [[1, "Hello", "25"]]
