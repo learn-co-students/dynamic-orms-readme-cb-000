@@ -5,9 +5,31 @@ require_relative "../lib/song.rb"
 require_relative "../config/environment.rb"
 
 
-song = Song.new(id: 1, name: "Hello", album: "25")
-puts "song name: " + song.name
-puts "song album: " + song.album
+song = Song.new(artist: "Adele", song: "Hello", album: "25")
 song.save
 
-DB[:conn].execute("SELECT * FROM songs")
+song = Song.new(artist: "Adele", song: "Chasing Pavements", album: "19")
+song.save
+
+song = Song.new(artist: "Kanye", song: "The Good Life", album: "Graduation")
+song.save
+
+song = Song.new(artist: "Kanye", song: "Slow Jamz", album: "College Dropout")
+song.save
+
+song = Song.new(artist: "Modest Mouse", song: "Float On", album: "GNFPWLBN")
+song.save
+
+song = Song.new(artist: "Marshmello", song: "pr0", album: "Joytime")
+song.save
+
+song = Song.new(artist: "Skrillex", song: "Summit", album: "Bangarang")
+song.save
+
+DB[:conn].execute("SELECT * FROM songs").each do |data|
+  puts "========================================"
+  puts "Artist: #{data["artist"]}"
+  puts "Song: #{data["song"]}"
+  puts "Album: #{data["album"]}"
+end
+puts "========================================"
