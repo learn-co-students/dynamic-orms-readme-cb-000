@@ -58,7 +58,14 @@ class Song
     DB[:conn].execute(sql)
   end
 
+  def self.find_by_id(id)
+    sql =
+      "SELECT * FROM #{self.table_name}
+      WHERE id = '#{id}'
+      LIMIT 1"
+
+    DB[:conn].execute(sql)
+  end
+
+
 end
-
-
-
