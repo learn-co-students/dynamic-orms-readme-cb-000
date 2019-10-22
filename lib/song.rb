@@ -2,8 +2,6 @@ require_relative "../config/environment.rb"
 require 'active_support/inflector'
 
 class Song
-
-
   def self.table_name
     self.to_s.downcase.pluralize
   end
@@ -14,16 +12,10 @@ class Song
     sql = "pragma table_info('#{table_name}')"
 
     table_info = DB[:conn].execute(sql)
-    column_names = []
-    table_info.each do |row|
-      column_names << row["name"]
-    end
-    column_names.compact
+    table_info.map { |row| row["name"] }.compact
   end
 
-  self.column_names.each do |col_name|
-    attr_accessor col_name.to_sym
-  end
+  attr_accessor *self.column_names
 
   def initialize(options={})
     options.each do |property, value|
@@ -31,34 +23,32 @@ class Song
     end
   end
 
-  def save
-    sql = "INSERT INTO #{table_name_for_insert} (#{col_names_for_insert}) VALUES (#{values_for_insert})"
-    DB[:conn].execute(sql)
-    @id = DB[:conn].execute("SELECT last_insert_rowid() FROM #{table_name_for_insert}")[0][0]
+  def self.find_by_name(name)
+    sql = "SELECT * FROM #{self.table_name} WHERE name = ?"
+    DB[:conn].execute(sql, name)
   end
 
-  def table_name_for_insert
+  def save
+    sql = "INSERT INTO #{table_name} (#{column_names.join(', ')}) VALUES (#{values_placeholder})"
+    DB[:conn].execute(sql)
+    @id = DB[:conn].execute("SELECT last_insert_rowid() FROM #{table_name}")[0][0]
+  end
+
+  private
+
+  def table_name
     self.class.table_name
   end
 
-  def values_for_insert
-    values = []
-    self.class.column_names.each do |col_name|
-      values << "'#{send(col_name)}'" unless send(col_name).nil?
-    end
-    values.join(", ")
+  def values_placeholder
+    (0..column_names.size).map { '?' }.join(', ')
   end
 
-  def col_names_for_insert
-    self.class.column_names.delete_if {|col| col == "id"}.join(", ")
+  def values
+    column_names.map { |col_name| send(col_name) }
   end
 
-  def self.find_by_name(name)
-    sql = "SELECT * FROM #{self.table_name} WHERE name = '#{name}'"
-    DB[:conn].execute(sql)
+  def column_names
+    self.class.column_names - ['id']
   end
-
 end
-
-
-
